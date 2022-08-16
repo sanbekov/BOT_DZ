@@ -5,7 +5,11 @@ import random
 
 #dp.message_handler()
 async def echo(message: types.Message):
-    if  message.text.isdigit():
+    if message.from_user.id in ADMIN and message.text.startswith('game'):
+        games = ['g', '🎳', '🎲', '🎰', '🏀', '⚽️']
+        r_games = random.choice(games)
+        await bot.send_dice(message.chat.id, emoji=r_games)
+    elif  message.text.isdigit():
         await bot.send_message(message.from_user.id, int(message.text) * int(message.text))
     else:
         await bot.send_message(message.from_user.id, message.text)
