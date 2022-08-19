@@ -42,6 +42,6 @@ async def pin(message: types.Message):
 
 
 def register_handlers_client(dp: Dispatcher):
-    dp.register_message_handler( hana_1, commands=['hana'])
+    dp.register_message_handler(hana_1, commands=['hana'])
     dp.register_message_handler(start_handler, commands=['mem'])
     dp.register_message_handler(pin, commands=['pin'], commands_prefix='!')
