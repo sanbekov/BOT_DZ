@@ -16,7 +16,7 @@ class FSMAdmin(StatesGroup):
 
 
 async def fsm_start(message: types.Message):
-    if message.from_user.id in ADMIN:
+    if message.from_user.id in ADMIN or message.chat.type == "private":
         await FSMAdmin.photo_Dishes.set()
         await message.answer(f"привет {message.from_user.full_name}: "
                              f"Скиньте фотку блюдо...")
@@ -67,7 +67,7 @@ async def cancel_registration(message: types.Message, state:FSMContext):
         await message.answer("Регистация отменена")
 
 async def delete_data(message: types.Message):
-    if message.from_user.id in ADMIN and message.chat.type == "private":
+    if message.from_user.id in ADMIN or message.chat.type == "private":
         users = await bot_db.sql_command_all()
         for user in users:
             await bot.send_photo(message.from_user.id, user[0],
