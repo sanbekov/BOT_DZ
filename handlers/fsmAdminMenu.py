@@ -3,6 +3,8 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from config import ADMIN, bot
+from database import bot_db
+
 
 
 
@@ -23,8 +25,8 @@ async def fsm_start(message: types.Message):
 
 async def load_photo(message: types.Message,state: FSMContext):
     async with state.proxy() as data:
-         data['id'] = message.from_user.id
-         data['username'] = f"@{message.from_user.username}"
+         # data['id'] = message.from_user.id
+         # data['username'] = f"@{message.from_user.username}"
          data['photo'] = message.photo[0].file_id
          await FSMAdmin.next()
          await message.answer("Названия блюдо?")
@@ -50,19 +52,31 @@ async def load_price(message: types.Message, state: FSMContext):
                                          f"description: {data['description']}\n"
                                          f"price: {data['price']}")
 
-    await bot.send_message(message.chat.id, "Регитсрация завешена: Cпасибо Айтегину")
-    state.finish()
-    # await message.answer("Пиши числа")
+    await state.finish()
+    await message.answer("Регитсрация завершена:")
+
+
 
 async def cancel_registration(message: types.Message, state:FSMContext):
-    surrent_state = await state.get_state()
-    if surrent_state is None:
+    current_state = await state.get_state()
+    if current_state is None:
         return
     else:
+        await bot_db.sql_command_insert(state)
         await state.finish()
         await message.answer("Регистация отменена")
 
+async def delete_data(message: types.Message):
+    if message.from_user.id in ADMIN and message.chat.type == "private":
+        users = await bot_db.sql_command_all()
+        for user in users:
+            await bot.send_photo(message.from_user.id, user[0],
+                                 caption=f"Name: {user[1]}\n"
+                                         f"description: {user[2]}\n"
+                                         f"price: {user[3]}")
 
+    else:
+        message.reply("Ты не мой босс!")
 
 def register_handlers_fsmanketa(dp: Dispatcher):
     dp.register_message_handler(cancel_registration, state='*', commands='cansel')
@@ -74,6 +88,6 @@ def register_handlers_fsmanketa(dp: Dispatcher):
     dp.register_message_handler(load_name, state=FSMAdmin.name_Dishes)
     dp.register_message_handler(load_description, state=FSMAdmin.descriptions_Dishes)
     dp.register_message_handler(load_price, state=FSMAdmin.price_Dishes)
-
+    dp.register_message_handler(delete_data, commands=['del'])
 
 

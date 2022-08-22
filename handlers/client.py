@@ -2,6 +2,7 @@ import random
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from config import bot, Dispatcher
 from aiogram import types
+from database.bot_db import sql_command_random
 
 
 #@dp.message_handler(commands=['hana'])
@@ -39,9 +40,11 @@ async def pin(message: types.Message):
     if message.reply_to_message:
         await bot.pin_chat_message(message.chat.id, message.reply_to_message.message_id)
 
-
+async def show_random_user(message:types.Message):
+    await sql_command_random(message)
 
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(hana_1, commands=['hana'])
     dp.register_message_handler(start_handler, commands=['mem'])
     dp.register_message_handler(pin, commands=['pin'], commands_prefix='!')
+    dp.register_message_handler(show_random_user,  commands=['get'])
