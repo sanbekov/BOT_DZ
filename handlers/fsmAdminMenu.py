@@ -4,6 +4,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from config import ADMIN, bot
 from database import bot_db
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 
@@ -51,7 +52,7 @@ async def load_price(message: types.Message, state: FSMContext):
                                  caption=f"Name: {data['name']}\n"
                                          f"description: {data['description']}\n"
                                          f"price: {data['price']}")
-
+    await bot_db.sql_command_insert(state)
     await state.finish()
     await message.answer("Регитсрация завершена:")
 
@@ -62,23 +63,36 @@ async def cancel_registration(message: types.Message, state:FSMContext):
     if current_state is None:
         return
     else:
-        await bot_db.sql_command_insert(state)
         await state.finish()
         await message.answer("Регистация отменена")
 
 async def delete_data(message: types.Message):
-    if message.from_user.id in ADMIN or message.chat.type == "private":
+    if message.from_user.id in ADMIN and message.chat.type == "private":
+        global users
         users = await bot_db.sql_command_all()
         for user in users:
             await bot.send_photo(message.from_user.id, user[0],
-                                 caption=f"Name: {user[1]}\n"
-                                         f"description: {user[2]}\n"
-                                         f"price: {user[3]}")
-
+                                 caption=f'Title: {user[1]}'
+                                         f'Description: {user[2]}'
+                                         f'Price: {user[3]}',
+                                 reply_markup=InlineKeyboardMarkup().add(
+                                     InlineKeyboardButton(
+                                         f"delete: {user[1] }",
+                                         callback_data=f"delete {user[1]}"
+                                     )
+                                 )
+                                 )
     else:
-        message.reply("Ты не мой босс!")
+        await message.reply("Ты не мой Босс!")
 
-def register_handlers_fsmanketa(dp: Dispatcher):
+
+async def complete_delete(call: types.CallbackQuery):
+    await bot_db.sql_command_delete(call.data.replace('delete ', ""))
+    await call.answer(text=f"Блюдо {call.data.replace('delete ', '')} удалено из БД", show_alert=True)
+    await bot.delete_message(call.message.chat.id, call.message.message_id)
+
+
+def register_handlers_fsmmenu(dp: Dispatcher):
     dp.register_message_handler(cancel_registration, state='*', commands='cansel')
     dp.register_message_handler(cancel_registration, Text(equals='cansel', ignore_case=True),state='*')
 
@@ -89,5 +103,8 @@ def register_handlers_fsmanketa(dp: Dispatcher):
     dp.register_message_handler(load_description, state=FSMAdmin.descriptions_Dishes)
     dp.register_message_handler(load_price, state=FSMAdmin.price_Dishes)
     dp.register_message_handler(delete_data, commands=['del'])
-
+    dp.register_callback_query_handler(
+        complete_delete,
+        lambda call: call.data and call.data.startswith("delete ")
+    )
 

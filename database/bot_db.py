@@ -1,10 +1,9 @@
-import random
 import sqlite3
 from config import bot
 import random
 
-def sql_create():
 
+def sql_create():
     global db, cursor
     db = sqlite3.connect("bot.sqlite3")
     cursor = db.cursor()
@@ -32,9 +31,9 @@ async def sql_command_random(message):
                                          f"description: {random_user[2]}\n"
                                          f"price: {random_user[3]}")
 
-
 async def sql_command_all():
     return cursor.execute("SELECT * FROM menu").fetchall()
 
 async def sql_command_delete(id):
-    cursor.execute("DELETE FROM menu WHERE id == ?", (id, ))
+    cursor.execute("DELETE FROM menu WHERE name == ?", (id,))
+    db.commit()
