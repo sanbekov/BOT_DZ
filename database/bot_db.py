@@ -34,6 +34,6 @@ async def sql_command_random(message):
 async def sql_command_all():
     return cursor.execute("SELECT * FROM menu").fetchall()
 
-async def sql_command_delete(id):
-    cursor.execute("DELETE FROM menu WHERE name == ?", (id,))
+async def sql_command_delete(name):
+    cursor.execute("DELETE FROM menu WHERE name == ?", (name,))
     db.commit()
