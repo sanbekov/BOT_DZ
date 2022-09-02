@@ -19,11 +19,12 @@ def get_data(html):
     for item in items:
         desc =  item.find("div",  class_="b-content__inline_item-link").find("div").getText().split(', ')
         fighter.append({
+            "link":item.find("div", class_="b-content__inline_item-link").find("a").get("href"),
             "title": item.find("div",class_="b-content__inline_item-link").find("a").getText(),
             "year": desc[0],
             "city":desc[1],
             "genre": desc[2],
-            "link": item.find("div", class_="b-content__inline_item-link").find("a").get("href")
+
         })
     return fighter
 

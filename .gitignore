@@ -5,3 +5,4 @@ venv
 pycache/
 *.py[cod]
 *.so
+bot.sqlite3
