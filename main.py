@@ -6,7 +6,7 @@ import logging
 import asyncio
 import config
 async def on_startup(_):
-    await bot.send_webhook(URL)
+    await bot.set_webhook(URL)
     asyncio.create_task(notificatione.scheduler())
     bot_db.sql_create()
 
