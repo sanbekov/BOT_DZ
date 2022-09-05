@@ -32,9 +32,8 @@ async def inline_wikipedia_handler(query: types.InlineQuery):
     articles = [
         types.InlineQueryResultArticle(
             id=result_id,
-            title= "wikipedia:",
+            title="wikipedia: ",
             url=link,
-            thumb_url=f"{link['thumbnails'][0]}",
             input_message_content=types.InputMessageContent(
                 message_text=link
             )
