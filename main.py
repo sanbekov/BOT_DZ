@@ -4,7 +4,7 @@ from handlers import client, callback, extra, admin, fsmAdminMenu, notificatione
 from database import bot_db
 import logging
 import asyncio
-
+import config
 async def on_startup(_):
     await bot.send_webhook(URL)
     asyncio.create_task(notificatione.scheduler())
