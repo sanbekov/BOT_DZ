@@ -26,7 +26,7 @@ extra.register_handlers_extra(dp)
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     #executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
-    executor.set_webhook(
+    executor.start_webhook(
         dispatcher=dp,
         webhook_path="",
         on_startup=on_startup,
