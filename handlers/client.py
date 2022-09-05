@@ -1,4 +1,6 @@
 import random
+from pprint import pprint
+
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.markdown import hbold
 from config import bot, Dispatcher
