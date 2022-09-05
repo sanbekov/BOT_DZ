@@ -27,12 +27,12 @@ def finder(text):
 
 async def inline_wikipedia_handler(query: types.InlineQuery):
     text = query.query or "echo"
-    link = f"https://www.google.com/search?q={text}"
+    link = f"https://ru.wikipedia.org/wiki/{text}"
     result_id: str = hashlib.md5(text.encode()).hexdigest()
     articles = [
         types.InlineQueryResultArticle(
             id=result_id,
-            title="wikipedia: ",
+            title="Wiki: ",
             url=link,
             input_message_content=types.InputMessageContent(
                 message_text=link
